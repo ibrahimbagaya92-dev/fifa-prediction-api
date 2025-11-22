@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bot Prédiction FIFA FC 25</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    select, button {
+      font-size: 1rem;
+      padding: 0.5rem;
+      margin: 8px;
+      border: none;
+      border-radius: 4px;
+    }
+
+    #conteneur-de-prediction {
+      margin-top: 20px;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Bot Prédiction FIFA</h1>
+
+  <select id="equipe1">
+    <option value="France">France</option>
+    <option value="Brésil">Brésil</option>
+    <option value="Argentine">Argentine</option>
+    <option value="Allemagne">Allemagne</option>
+  </select>
+
+  <select id="equipe2">
+    <option value="France">France</option>
+    <option value="Brésil">Brésil</option>
+    <option value="Argentine">Argentine</option>
+    <option value="Allemagne">Allemagne</option>
+  </select>
+
+  <button onclick="envoyerPrediction()">Prédire</button>
+
+  <div id="conteneur-de-prediction"></div>
+
+  <script>
+    const API_URL = "https://fifa-api.onrender.com";
+
+    async function envoyerPrediction() {
+      const equipe1 = document.getElementById("equipe1").value.trim();
+      const equipe2 = document.getElementById("equipe2").value.trim();
+      const prediction = document.getElementById("conteneur-de-prediction");
+
+      if (equipe1.toLowerCase() === equipe2.toLowerCase()) {
+        prediction.innerHTML = `⚠️ Saisie invalide : les deux équipes sont identiques ⚠️`;
+      } else {
+        prediction.innerHTML = `🔄 Analyse en cours...`;
+
+        try {
+          const response = await fetch(`${API_URL}/predict`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ equipe1, equipe2 })
+          });
+
+          const result = await response.json();
+          prediction.innerHTML = `✅ Résultat : ${result.prediction}`;
+        } catch (error) {
+          prediction.innerHTML = `❌ Erreur lors de la prédiction`;
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
